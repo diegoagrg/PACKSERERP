@@ -1,0 +1,10 @@
+name: Twig UI Templates
+description: Create and manage Twig templates in the UI
+
+type: module
+core_version_requirement: ^10 || ^11
+
+# Information added by Drupal.org packaging script on 2024-08-26
+version: '2.1.0'
+project: 'twig_ui'
+datestamp: 1724697373

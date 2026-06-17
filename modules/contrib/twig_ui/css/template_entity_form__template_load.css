@@ -1,0 +1,11 @@
+.template-code pre {
+  margin: 1em 0;
+  padding: 1em;
+  background: rgb(211,211,211);
+}
+.description.insert-description {
+  margin-top: 1em;
+}
+.file-path {
+  margin-bottom: 1em;
+}
