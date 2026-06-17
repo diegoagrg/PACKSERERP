@@ -1,0 +1,171 @@
+
+/**
+ * If using a CSS pre-processor, tell it to overwrite this file. If not, place
+ * your custom CSS modifications here.
+ */
+body > img,
+body > hr,
+body > strong,
+body > i,
+article > h2 {
+  display: none;
+}
+
+.pod,
+.pod__row,
+.pod__col {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pod {
+  width: 100%;
+}
+
+.pod__row {
+  flex: 100%;
+  margin: -1rem;
+}
+
+.pod__col {
+  flex: 1;
+  margin: 1rem;
+  padding: 0.5rem;
+}
+
+.pod__col--id {
+  text-align: right;
+}
+
+.pod__col--id > div {
+  flex: 100%;
+}
+
+.pod__titulo {
+  margin-top: 1em;
+}
+
+.pod__id {
+  font-weight: bold;
+  font-size: 2rem;
+  text-decoration: underline;
+  margin-bottom: 1em;
+}
+
+.pod__col--id .field > div {
+  display: inline-block;
+}
+
+.pod__col--id .field--label {
+  font-size: 0.8em;
+}
+
+.pod__col--id .field--label::after {
+  content: ':';
+}
+
+.pod__col--id .field--item {
+  width: 200px;
+  border-bottom: solid 1px;
+  text-align: center;
+}
+
+.pod_col--comprador {
+  border: solid;
+  margin: 1.5rem;
+  height: 100px;
+}
+
+.pod_col--comprador > div {
+  flex: 100%;
+}
+
+.pod_col--comprador .field {
+  display: flex;
+}
+
+.pod_col--comprador .field--label {
+  width: 150px;
+  font-size: 0.8rem;
+}
+
+.pod_col--comprador .field--label::after {
+  content: ':';
+}
+
+.pod_col--comprador .field--item {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.pod__descripcion {
+  border: solid;
+  flex: 100%;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.pod__descripcion__row {
+  padding: 0.3rem;
+  display: flex;
+}
+
+.pod__descripcion__row--header {
+  background: #272727;
+  color: #fff;
+}
+
+.pod__descripcion__cantidad {
+  flex: 30%;
+}
+
+.pod__descripcion__detalle {
+  flex: 70%;
+  display: flex;
+  justify-content: center;
+}
+
+.pod__descripcion__row--cuerpo:not(:last-child) {
+  border-bottom: solid 2px;
+}
+
+.pod__col--firmas {
+  justify-content: space-between;
+  padding-top: 12rem;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.pod__firma {
+  flex-basis: 200px;
+  border-top: solid 1px;
+}
+
+.pod__col--aviso {
+  font-size: 0.8rem;
+  text-align: center;
+  margin: 4rem;
+  flex: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.pod__descripcion__detalle_opcional {
+  flex-basis: 70%;
+  justify-self: flex-end;
+  text-align: left;
+  margin-left: 30%;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.pod__descripcion__row.pod__descripcion__row--cuerpo {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pod__descripcion__detalle {
+  text-align: left;
+  justify-content: flex-start;
+  font-weight: bold;
+}

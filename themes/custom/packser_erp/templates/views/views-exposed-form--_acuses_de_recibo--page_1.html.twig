@@ -1,0 +1,53 @@
+<div class="panel-group filtros_expuestos" id="accordion-views-exposed-form-acuses_de_recibo" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="heading-views-exposed-form-acuses_de_recibo">
+      <h4 class="panel-title">
+
+        <ul class="action-links">
+          <li><a href="/node/add/proof_of_delivery" class="button button-action button--primary button--small" data-drupal-link-system-path="node/add">Crear nuevo acuse</a></li>
+        </ul>
+        <a
+          class="collapsed"
+          role="button"
+          data-toggle="collapse"
+          data-parent="#accordion-views-exposed-form-acuses_de_recibo"
+          href="#collapse-views-exposed-form-acuses_de_recibo"
+          aria-expanded="false"
+          aria-controls="collapse-views-exposed-form-acuses_de_recibo"
+        >
+          Filtrar <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+        </a>
+      </h4>
+    </div>
+    <div
+      id="collapse-views-exposed-form-acuses_de_recibo"
+      class="panel-collapse collapse"
+      role="tabpanel"
+      aria-labelledby="headingTwo"
+    >
+      <div class="panel-body">
+
+        <div class="row">
+          <div class="col-md-6">
+            {{ form.field_pod_value }}
+            {{ form.field_orden_de_compra_value }}
+            {{ form.field_estado_de_entrega_target_id }}
+            {{ form.field_estado_de_facturacion_target_id }}
+            {{ form.field_se_entrego_a_tiempo_value }}
+          </div>
+          <div class="col-md-6">
+            {{ form.field_cliente_target_id }}
+            {{ form.field_lugar_de_entrega_target_id }}
+            {{ form.field_contacto_en_planta_target_id }}
+            {{ form.field_fecha_de_entrega_value }}
+            {{ form.field_proveedor_target_id }}
+          </div>
+          <div class="col-md-12 align-right">
+            {{ form.actions }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

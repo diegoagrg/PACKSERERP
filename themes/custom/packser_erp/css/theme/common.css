@@ -1,0 +1,258 @@
+:root {
+  --blanco: #efeeee;
+  --negro: #272727;
+  --verde: #c1c94f;
+  --verde-obscuro: #74783b;
+}
+
+body {
+  color: var(--negro);
+  background: var(--blanco);
+  margin: 0;
+}
+
+.logo {
+  width: 100%;
+  max-width: 200px;
+  position: relative;
+}
+
+.logo img {
+  width: 100%;
+}
+
+a {
+  color: var(--verde-obscuro);
+  transition: 0.2s;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+a:hover {
+  color: var(--verde-obscuro);
+  text-decoration: none;
+}
+
+li.print a,
+a.button.button-action.button--primary.button--small {
+  background: transparent;
+  border: 2px solid var(--verde);
+  border-radius: 999px;
+  color: var(--verde);
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0.4rem 1.33rem;
+  transition: 0.2s;
+}
+
+li.print a:hover,
+a.button.button-action.button--primary.button--small:hover {
+  text-decoration: none;
+  background: var(--verde-obscuro);
+  color: var(--verde);
+}
+
+ul.action-links {
+  list-style: none;
+}
+
+li.print {
+  padding: 16px;
+}
+
+.node_view ul.pre_links {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.node_view ul.pre_links li:first-child {
+  background: none;
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .offset-md-1 {
+    margin-left: 8.3333333333%;
+  }
+
+  .offset-md-2 {
+    margin-left: 16.6666666667%;
+  }
+
+  .offset-md-3 {
+    margin-left: 25%;
+  }
+
+  .offset-md-4 {
+    margin-left: 33.3333333333%;
+  }
+
+  .offset-md-5 {
+    margin-left: 41.6666666667%;
+  }
+
+  .offset-md-6 {
+    margin-left: 50%;
+  }
+
+  .offset-md-7 {
+    margin-left: 58.3333333333%;
+  }
+
+  .offset-md-8 {
+    margin-left: 66.6666666667%;
+  }
+
+  .offset-md-9 {
+    margin-left: 75%;
+  }
+
+  .offset-md-10 {
+    margin-left: 83.3333333333%;
+  }
+
+  .offset-md-11 {
+    margin-left: 91.6666666667%;
+  }
+}
+
+@media (min-width: 768px) {
+  ul.menu.menu--main.nav.navbar-nav,
+  .menu--account {
+    float: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .menu--account,
+  .menu--main {
+    margin: 0;
+    text-align: right;
+  }
+}
+
+
+option[value="administrator"] {
+  display: none;
+}
+
+ul.tabs--primary.nav.nav-tabs li:nth-child(n + 3) {
+  display: none;
+}
+
+.view-header a[href="/admin/people/create"] {
+  padding: 8px;
+  display: inline-block;
+  border-radius: 25px;
+  border: solid;
+  margin-bottom: 8px;
+  transition: 0.3s;
+}
+
+.view-header a[href="/admin/people/create"]:hover {
+  text-decoration: none;
+  background: var(--verde);
+}
+
+/* .view-actividad {
+  overflow-y: scroll;
+  max-height: calc(100vh - 160px);
+} */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--verde);
+  border-radius: 5px;
+  opacity: 0.5;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--verde-obscuro);
+}
+
+.navbar-default {
+  background-color: #f8f8f8;
+  border-color: var(--verde);
+  border-radius: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+
+@media (min-width: 768px) {
+  header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .navbar:before,
+  .navbar::after {
+    position: absolute;
+  }
+
+  .region-navigation-collapsible {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  .navbar-header {
+    float: none;
+    display: flex;
+  }
+}
+
+html, body {
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+[role="heading"] {
+  margin-bottom: 8px;
+}
+
+.main-container > .row > section {
+  /* max-height: calc(100vh - 200px); */
+  overflow-x: hidden;
+  position: relative;
+  padding-bottom: 88px;
+}
+
+.main-container > .row > section::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent, var(--blanco) 50px);
+  width: inherit;
+  height: 80px;
+}
+
+@media (max-width: 1024px) {
+  body,
+  body a {
+    font-size: 16px;
+  }
+
+  nav#block-packser-erp-account-menu {
+    padding: 2rem 1rem;
+    font-weight: bold;
+  }
+}

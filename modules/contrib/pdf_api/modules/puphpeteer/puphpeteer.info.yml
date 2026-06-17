@@ -1,0 +1,11 @@
+name: Puphpeteer
+description: Generate PDFs using Puppeteer
+type: module
+core_version_requirement: ^9 || ^10 || ^11
+dependencies:
+  - pdf_api:pdf_api
+
+# Information added by Drupal.org packaging script on 2025-08-05
+version: '2.4.5'
+project: 'pdf_api'
+datestamp: 1754397608

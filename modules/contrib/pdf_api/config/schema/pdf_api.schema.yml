@@ -1,0 +1,66 @@
+pdf_api.dom_pdf.settings:
+  type: config_object
+  label: 'Dompdf Settings'
+  mapping:
+    defaultFont:
+      description: 'The default font family.'
+      type: string
+    dpi:
+      description: 'The DPI setting for images.'
+      type: integer
+    fontHeightRatio:
+      description: 'The ratio used to convert HTML font point sizes to PDF font point sizes.'
+      type: float
+    pdfBackend:
+      description: 'The PDF rendering backend to use.'
+      type: string
+    pdflibLicense:
+      description: 'The license key for PDFlib'
+      type: string
+    isPhpEnabled:
+      description: 'Enable inline PHP'
+      type: boolean
+    isRemoteEnabled:
+      description: 'Enable remote file access'
+      type: boolean
+    isJavascriptEnabled:
+      description: 'Enable inline JavaScript'
+      type: boolean
+    chroot:
+      description: '"chroot" of dompdf'
+      type: sequence
+      sequence:
+        type: string
+    fontDir:
+      description: 'The location of the dompdf font directory'
+      type: string
+    fontCache:
+      description: 'The location of the dompdf font cache directory'
+      type: string
+    tempDir:
+      description: 'The location of a temporary directory.'
+      type: string
+    debugPng:
+      description: 'Enable debug PNGs'
+      type: boolean
+    debugKeepTemp:
+      description: 'Keep temporary files'
+      type: boolean
+    debugCss:
+      description: 'Enable debug CSS'
+      type: boolean
+    debugLayout:
+      description: 'Enable debug layout'
+      type: boolean
+    debugLayoutLines:
+      description: 'Enable debug layout lines'
+      type: boolean
+    debugLayoutBlocks:
+      description: 'Enable debug layout blocks'
+      type: boolean
+    debugLayoutInline:
+      description: 'Enable debug layout inline'
+      type: boolean
+    debugLayoutPaddingBox:
+      description: 'Enable debug layout padding box'
+      type: boolean

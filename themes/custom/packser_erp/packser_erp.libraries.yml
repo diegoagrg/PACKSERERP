@@ -1,0 +1,11 @@
+framework:
+  css:
+    theme:
+      css/style.css: {}
+  js:
+    js/style/common.js: {}
+
+printable:
+  css:
+    theme:
+      css/printable.css: {}

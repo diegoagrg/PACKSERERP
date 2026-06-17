@@ -1,0 +1,131 @@
+.usuario--perfil {
+  padding-left: 16px;
+}
+
+.usuario--perfil__col--informacion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 8px;
+  text-align: center;
+  color: var(--verde-obscuro);
+  font-weight: bold;
+  padding: 19px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid var(--verde);
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+}
+
+.usuario--perfil__fotografia,
+.usuario--perfil__nombre,
+.usuario--perfil__puesto,
+.usuario--perfil__username,
+.usuario--perfil__email,
+.usuario--perfil__telefono,
+.usuario--perfil__celular,
+.usuario--perfil__direccion {
+  flex: 100%;
+}
+
+.usuario--perfil__fotografia {
+  display: flex;
+  justify-content: center;
+}
+
+.usuario--perfil__fotografia img {
+  border-radius: 50%;
+}
+
+.usuario--perfil__nombre {
+  font-size: 20px;
+}
+
+.usuario--perfil__puesto {
+  font-size: 0.9em;
+  font-weight: light;
+}
+
+.usuario--perfil__username {
+  font-style: italic;
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+.usuario--perfil__email,
+.usuario--perfil__telefono,
+.usuario--perfil__celular,
+.usuario--perfil__direccion {
+  font-size: 0.8em;
+  color: var(--negro);
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 0;
+  text-align: center;
+  color: var(--verde-obscuro);
+}
+
+
+.usuario.usuario--lateral {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.usuario--lateral .usuario--perfil__fotografia img {
+  border-radius: 50%;
+}
+
+.usuario--lateral .usuario--perfil__nombre {
+  font-size: 20px;
+  margin: 8px 0 0;
+}
+
+.usuario--lateral .usuario--perfil__puesto {
+  font-weight: light;
+}
+
+.usuario--lateral .usuario--perfil__username {
+  font-style: italic;
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.region.region-sidebar-first {
+  min-height: 20px;
+  padding: 19px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid var(--verde);
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+}
+
+.well {
+  border-color: var(--verde);
+}
+
+.well h2 {
+  color: var(--verde-obscuro);
+  margin-top: 0;
+}
+
+@media (max-width: 767px) {
+  .usuario--perfil__fotografia img {
+    width: 50px;
+  }
+
+  aside[role="complementary"] {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-collapse .usuario {
+    display: none;
+  }
+}

@@ -1,0 +1,21 @@
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
+    file:
+      - '/includes/include.drupalci.main.yml'
+      - '/includes/include.drupalci.variables.yml'
+      - '/includes/include.drupalci.workflows.yml'
+
+.composer-base:
+  artifacts:
+    exclude:
+      - '.git'
+      - '.git/**/*'
+      - '$_WEB_ROOT/**/.git'
+      - '$_WEB_ROOT/**/.git/**/*'
+      - 'vendor/**/.git'
+      - 'vendor/**/.git/**/*'
+      - "vendor/mpdf/ttfonts/"
+      - "vendor/mpdf/ttfonts/**/*"
+      - "vendor/tecnickcom/tcpdf/fonts"
+      - "vendor/tecnickcom/tcpdf/fonts/**/*"

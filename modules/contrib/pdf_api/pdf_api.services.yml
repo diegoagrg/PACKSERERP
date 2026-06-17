@@ -1,0 +1,12 @@
+services:
+  plugin.manager.pdf_generator:
+    class: Drupal\pdf_api\PdfGeneratorPluginManager
+    arguments:
+      - '@container.namespaces'
+      - '@config.factory'
+      - '@module_handler'
+      - '@cache.discovery'
+
+  logger.channel.pdf_api:
+    parent: logger.channel_base
+    arguments: ['pdf api']

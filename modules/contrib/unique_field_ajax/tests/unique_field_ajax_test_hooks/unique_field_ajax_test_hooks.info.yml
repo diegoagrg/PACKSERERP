@@ -1,0 +1,13 @@
+name: Unique Field Ajax Test Hooks
+description: "Support module for testing Unique Field Ajax hooks."
+dependencies:
+  - unique_field_ajax:unique_field_ajax
+core_version_requirement: ^8 || ^9 || ^10 || ^11
+type: module
+package: Other
+hidden: true
+
+# Information added by Drupal.org packaging script on 2025-07-08
+version: '2.2.3'
+project: 'unique_field_ajax'
+datestamp: 1751968827

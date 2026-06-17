@@ -1,0 +1,30 @@
+<div class="usuario usuario--perfil row">
+  <div class="usuario--perfil__col usuario--perfil__col--informacion col-md-3">
+    <div class="usuario--perfil__fotografia">
+      {{ content.user_picture }}
+    </div>
+    <div class="usuario--perfil__nombre">
+      {{ user.field_nombre.value }} {{ user.field_apellido.value }}
+    </div>
+    <div class="usuario--perfil__puesto">
+      {{ content.field_puesto }}
+    </div>
+    <div class="usuario--perfil__username">
+      {{ user.name.value }}
+    </div>
+    <div class="usuario--perfil__email">
+      {{ user.mail.value }}
+    </div>
+
+    {{ content.field_telefono }}
+
+    {{ content.field_celular }}
+
+    {{ content.field_direccion }}
+
+  </div>
+
+  <div class="usuario--perfil__col usuario--perfil__col--actividad col-md-9">
+    {{ drupal_view('actividad', 'block_1', user.id()) }}
+  </div>
+</div>

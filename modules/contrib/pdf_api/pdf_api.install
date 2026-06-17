@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the PDF API module.
+ */
+
+/**
+ * Adds dompdf settings.
+ */
+function pdf_api_update_20403() {
+  $settings = \Drupal::configFactory()->getEditable('pdf_api.dom_pdf.settings');
+  $settings
+    ->set('defaultFont', 'serif')
+    ->set('dpi', 96)
+    ->set('fontHeightRatio', 1.1)
+    ->set('pdfBackend', 'CPDF')
+    ->set('pdflibLicense', '')
+    ->set('isPhpEnabled', FALSE)
+    ->set('isRemoteEnabled', TRUE)
+    ->set('isJavascriptEnabled', TRUE)
+    ->set('chroot', ['.'])
+    ->set('fontDir', 'temporary://')
+    ->set('fontCache', 'temporary://')
+    ->set('tempDir', 'temporary://')
+    ->set('debugPng', FALSE)
+    ->set('debugKeepTemp', FALSE)
+    ->set('debugCss', FALSE)
+    ->set('debugLayout', FALSE)
+    ->set('debugLayoutLines', TRUE)
+    ->set('debugLayoutBlocks', TRUE)
+    ->set('debugLayoutInline', TRUE)
+    ->set('debugLayoutPaddingBox', TRUE)
+    ->save();
+}

@@ -1,0 +1,64 @@
+puphpeteer.settings:
+  type: config_object
+  label: 'Puppeteer config.'
+  mapping:
+    executable_path:
+      type: string
+      label: 'Path to node'
+    chrome_extra_args:
+      type: string
+      label: 'Extra arguments to add when starting Chrome'
+    idle_timeout:
+      type: string
+      label: 'Idle timeout'
+    read_timeout:
+      type: string
+      label: 'Read timeout'
+    stop_timeout:
+      type: string
+      label: 'Stop timeout'
+    log_to_node_console:
+      type: string
+      label: 'Log to node console?'
+    debug:
+      type: boolean
+      label: 'Enable debugging support'
+    log_to_browser_console:
+      type: string
+      label: 'Log to browser console?'
+    headless:
+      type: boolean
+      label: 'Run Chrome in headless mode (usually yes)?'
+    slowMo:
+      type: integer
+      label: 'Delay to add to Puppeteer actions'
+    devTools:
+      type: boolean
+      label: 'Open devtools?'
+    triggerDebugging:
+      type: boolean
+      label: 'Trigger the debugger via page.evaluate?'
+    source:
+      type: string
+      label: 'Content source'
+    pagedjs:
+      type: boolean
+      label: 'Whether to load pagedjs in Chrome'
+    service:
+      type: boolean
+      label: 'Use an external Puppeteer service rather than launching one'
+    service_url:
+      type: string
+      label: 'Connect to this browserURL (see puppeteer.connect documentation)'
+    leave_running:
+      type: boolean
+      label: 'Whether to leave the browser running after we are done with it'
+    base_auth_username:
+      type: string
+      label: 'Username for basic auth, if required.'
+    base_auth_password:
+      type: string
+      label: 'Password for basic auth, if required.'
+    printBackground:
+      type: boolean
+      label: 'Whether to print background images when generating PDFs.'

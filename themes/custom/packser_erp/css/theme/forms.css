@@ -1,0 +1,85 @@
+.vista-con-filtros form .form--inline {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.vista-con-filtros form .form--inline .form-item {
+  flex: 50%;
+  padding: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media(max-width: 767px) {
+  .vista-con-filtros form .form--inline .form-item {
+    flex: 100%;
+  }
+}
+
+.vista-con-filtros form .form--inline .form-item .control-label {
+  flex: 200px;
+}
+
+.vista-con-filtros form .form--inline .form-item .control-label::after {
+  content: ':';
+}
+
+.vista-con-filtros form .form--inline .form-item .input-group,
+.vista-con-filtros form .form--inline .form-item .form-control,
+.vista-con-filtros form .form--inline .form-item .select-wrapper,
+.vista-con-filtros form .form--inline .form-item .select-wrapper select {
+  width: 100%;
+ }
+
+.view-header ul.action-links {
+  display: flex;
+  padding: 16px 0;
+  justify-content: flex-end;
+}
+
+.vista-con-filtros form .form-actions {
+  flex: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+
+
+.action-links {
+  padding: 0;
+  margin: 0;
+}
+
+.filtros_expuestos a {
+  color: #c1c94f;
+}
+
+.filtros_expuestos .glyphicon {
+  font-size: 12px;
+}
+
+.filtros_expuestos .panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 8px
+}
+
+.view--acuses-de-recibo .panel-group {
+  margin-bottom: -15px;
+}
+
+
+#block-userlogin {
+  max-width: 500px;
+  margin: auto;
+}
+
+#block-userlogin [title="Create a new user account."] {
+  display: none;
+}
+
+#block-userlogin ul {
+  list-style: none;
+}

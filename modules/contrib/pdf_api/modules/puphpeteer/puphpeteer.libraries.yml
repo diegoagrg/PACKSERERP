@@ -1,0 +1,6 @@
+pagedjs:
+  js:
+    //unpkg.com/pagedjs/dist/paged.polyfill.js: { type: external, minified: true }
+    js/paged.js: { }
+  dependencies:
+    - core/jquery

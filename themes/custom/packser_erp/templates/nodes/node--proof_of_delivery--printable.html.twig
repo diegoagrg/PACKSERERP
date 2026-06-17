@@ -1,0 +1,77 @@
+<div class="pod">
+
+  <div class="pod__row">
+    <div class="pod__col pod__col--logo">
+      <div class="pod__logo">
+        {{ content.field_logo }}
+      </div>
+    </div>
+    <div class="pod__col pod__col--id">
+      <div class="pod__titulo">
+        {{ "Acuse de recibo"|t }}
+      </div>
+      <div class="pod__id">
+        POD-{{ node.field_pod.value }}
+      </div>
+      <div class="pod__fecha-de-envio">
+        {{ content.field_fecha_de_entrega }}
+      </div>
+      <div class="pod__orden_de_compra">
+        {{ content.field_orden_de_compra }}
+      </div>
+      <div class="pod__datos_complementarios">
+        {{ content.field_datos_complementarios }}
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="pod__row">
+    <div class="pod__col pod_col--comprador">
+      <div class="pod__entrega">
+        {{ content.field_lugar_de_entrega }}
+      </div>
+      <div class="pod__direccion">
+        {{ content.field_direccion }}
+      </div>
+    </div>
+    <div class="pod__col pod_col--comprador">
+      <div class="pod__cliente">
+        {{ content.field_cliente }}
+      </div>
+      <div class="pod__contacto">
+        {{ content.field_contacto_en_planta }}
+      </div>
+    </div>
+  </div>
+
+  <div class="pod__row">
+    <div class="pod__col pod__col--detalle">
+      <div class="pod__descripcion">
+        {{ content.field_descripcion }}
+      </div>
+    </div>
+  </div>
+
+  <div class="pod__row">
+    <div class="pod__col pod__col--firmas">
+      <div class="pod__firma">
+        {{ "Nombre y firma"|t }}
+      </div>
+      <div class="pod__firma">
+        {{ "Fecha y hora"|t }}
+      </div>
+    </div>
+  </div>
+
+  <div class="pod__row">
+    <div class="pod__col pod__col--aviso">
+      <div class="pod__aviso">
+        {{ "Este documento firmado avala la entrega de la cantidad y producto descrito"|t }}
+        <br/>
+        {{ "Packser SOS, SA de CV"|t }}
+      </div>
+    </div>
+  </div>
+
+</div>

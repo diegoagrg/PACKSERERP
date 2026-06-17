@@ -1,0 +1,50 @@
+field.field.*.*.*.third_party.unique_field_ajax:
+  type: mapping
+  label: Unique field third party settings
+  mapping:
+    unique:
+      type: integer
+      label: 'Set if field is unique or not'
+    per_lang:
+      type: integer
+      label: 'Unique per language'
+    case_sensitive:
+      type: integer
+      label: 'Case sensitivity'
+    use_ajax:
+      type: integer
+      label: 'Use ajax'
+    no_enforce:
+      type: integer
+      label: 'Do not enforce uniqueness'
+    message:
+      type: string
+      label: 'A custom error message'
+    message_warning:
+      type: string
+      label: 'A custom warning message'
+node.type.*.third_party.unique_field_ajax:
+  type: mapping
+  label: Unique field third party settings
+  mapping:
+    unique:
+      type: integer
+      label: 'Set if field is unique or not'
+    per_lang:
+      type: integer
+      label: 'Unique per language'
+    case_sensitive:
+      type: integer
+      label: 'Case sensitivity'
+    use_ajax:
+      type: integer
+      label: 'Use ajax'
+    no_enforce:
+      type: integer
+      label: 'Do not enforce uniqueness'
+    message:
+      type: string
+      label: 'A custom error message'
+    message_warning:
+      type: string
+      label: 'A custom warning message'

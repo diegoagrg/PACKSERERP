@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Implements all Unique Field Ajax hooks, for testing purposes.
+ */
+
+use Drupal\Core\Database\Query\AlterableInterface;
+
+/**
+ * Implements hook_query_unique_field_ajax_alter().
+ *
+ * Used to test the hook_query_alter, check for '_hook_query_alter_123'.
+ */
+function unique_field_ajax_test_hooks_query_unique_field_ajax_alter(AlterableInterface $query) {
+  if (strpos($query->getMetaData('field_name'), "_hook_query_alter_123") !== FALSE) {
+    $conditions = &$query->conditions();
+    foreach ($conditions as $i => $condition) {
+      if (is_array($condition) && isset($condition['field'])) {
+        unset($conditions[$i]);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_unique_field_ajax_unique_results_alter().
+ *
+ * Used to test altering of unique results.
+ */
+function unique_field_ajax_test_hooks_unique_field_ajax_unique_results_alter(array &$result, array $metadata) {
+  if (isset($metadata['field_value']) && strpos($metadata['field_value'], 'www.') !== FALSE) {
+    $result[0] = 0;
+  }
+}

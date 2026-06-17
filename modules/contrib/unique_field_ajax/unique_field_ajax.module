@@ -1,0 +1,814 @@
+<?php
+
+/**
+ * @file
+ * Unique value for cck fields check module.
+ */
+
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\Entity\BaseFieldOverride;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\media_library\Form\FileUploadForm;
+
+/**
+ * Implements hook_help().
+ */
+function unique_field_ajax_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the unique_field_ajax module.
+    case 'help.page.unique_field_ajax':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Unique Field module allows administrators to require that content supplied for specified fields is unique.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function unique_field_ajax_form_field_config_edit_form_alter(
+  &$form,
+  FormStateInterface $form_state,
+  $form_id
+) {
+  $field = $form_state->getFormObject()->getEntity();
+  $unique_field_ajax_types = [
+    'string',
+    'string_long',
+    'list_string',
+    'text',
+    'email',
+    'entity_reference',
+    'path',
+    'uri',
+    'link',
+    'integer',
+    'decimal',
+    'color_field_type',
+  ];
+  if (!$field->getFieldStorageDefinition()->isMultiple()) {
+    if (in_array($field->getType(), $unique_field_ajax_types)) {
+      $form['third_party_settings']['unique_field_ajax'] = [
+        '#type' => 'details',
+        '#group' => 'additional_settings',
+        '#title' => t('Unique field settings'),
+        '#open' => TRUE,
+        '#tree' => TRUE,
+      ];
+      $fields = _unique_field_ajax_form_fields($field,
+        'third_party_settings[unique_field_ajax]');
+      if (!empty($fields)) {
+        foreach ($fields as $name => $details) {
+          $form['third_party_settings']['unique_field_ajax'][$name] = $details;
+        }
+      }
+      $form['#validate'][] = '_unique_field_ajax_field_settings_validate';
+    }
+  }
+}
+
+/**
+ * Custom form settings field validator.
+ */
+function _unique_field_ajax_field_settings_validate(
+  &$form,
+  FormStateInterface $form_state
+) {
+  $third_party_settings = $form_state->getValue('third_party_settings');
+
+  // If unique is not enabled we don't need to save the settings to the field.
+  if (isset($third_party_settings['unique_field_ajax']['unique']) && $third_party_settings['unique_field_ajax']['unique'] === 0) {
+    unset($third_party_settings['unique_field_ajax']);
+    $form_state->setValue('third_party_settings', $third_party_settings);
+  }
+}
+
+/**
+ * Alter forms to add unique title checkbox.
+ *
+ * @param array $form
+ *   Form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ * @param string $form_id
+ *   Form id.
+ */
+function unique_field_ajax_form_alter(
+  array &$form,
+  FormStateInterface $form_state,
+  string $form_id
+) {
+  if (_unique_field_ajax_is_config_form($form_id)) {
+    $entity = $form_state->getFormObject()->getEntity();
+    $form['unique_field_ajax'] = [
+      '#type' => 'details',
+      '#group' => 'additional_settings',
+      '#title' => t('Unique title settings'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+    $fields = _unique_field_ajax_form_fields($entity, 'unique_field_ajax');
+    if (!empty($fields)) {
+      foreach ($fields as $name => $details) {
+        $form['unique_field_ajax'][$name] = $details;
+      }
+    }
+    $form['#entity_builders'][] = '_unique_field_ajax_entity_form_builder';
+  }
+}
+
+/**
+ * Save the third party settings.
+ *
+ * @param string $entity_type
+ *   Entity type.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Entity object.
+ * @param array $form
+ *   Form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ */
+function _unique_field_ajax_entity_form_builder(
+  string $entity_type,
+  EntityInterface $entity,
+  array &$form,
+  FormStateInterface $form_state
+) {
+  $fields = [
+    'unique',
+    'per_lang',
+    'use_ajax',
+    'case_sensitive',
+    'no_enforce',
+    'message',
+  ];
+  foreach ($fields as $field) {
+    $value = $form_state->getValue(['unique_field_ajax', $field]);
+    if ($value) {
+      $entity->setThirdPartySetting('unique_field_ajax', $field, $value);
+    }
+    else {
+      $entity->unsetThirdPartySetting('unique_field_ajax', $field);
+    }
+  }
+}
+
+/**
+ * Drupal 10+: attaching data to unique fields.
+ *
+ * @param array $element
+ *   Element array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   FormState.
+ * @param array $context
+ *   Context array.
+ */
+function unique_field_ajax_field_widget_single_element_form_alter(
+  array &$element,
+  FormStateInterface $form_state,
+  array $context
+) {
+  _unique_field_ajax_attaching_to_field($element, $form_state, $context);
+}
+
+/**
+ * Drupal 8-9: attaching data to unique fields.
+ *
+ * @param array $element
+ *   Element array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   FormState.
+ * @param array $context
+ *   Context array.
+ */
+function unique_field_ajax_field_widget_form_alter(
+  array &$element,
+  FormStateInterface $form_state,
+  array $context
+) {
+  _unique_field_ajax_attaching_to_field($element, $form_state, $context);
+}
+
+/**
+ * Joining method to be used by the field alter hooks.
+ *
+ * @param array $element
+ *   Element array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   FormState.
+ * @param array $context
+ *   Context array.
+ */
+function _unique_field_ajax_attaching_to_field(
+  array &$element,
+  FormStateInterface $form_state,
+  array $context
+) {
+  $field_definition = $context['items']->getFieldDefinition();
+  $name = $field_definition->getFieldStorageDefinition()->getName();
+  $label = $field_definition->getLabel();
+
+  // Alter field widgets to enable unique settings.
+  if ($field_definition instanceof FieldConfig) {
+    $is_unique_per_lang = NULL;
+    if ((\Drupal::moduleHandler()
+      ->moduleExists('language')) && \Drupal::languageManager()
+      ->getCurrentLanguage()
+      ->getId()
+    ) {
+      $is_unique_per_lang = $field_definition->getThirdPartySetting('unique_field_ajax',
+        'per_lang');
+    }
+    if ($field_definition->getThirdPartySetting('unique_field_ajax',
+      'unique')) {
+      $main_property_name = $field_definition->getFieldStorageDefinition()
+        ->getMainPropertyName();
+      $case_sensitive = $field_definition->getThirdPartySetting('unique_field_ajax',
+        'case_sensitive');
+      $no_enforce = $field_definition->getThirdPartySetting('unique_field_ajax',
+        'no_enforce');
+      $element[$main_property_name]['#unique_field_ajax_settings'] = [
+        'per_lang' => $is_unique_per_lang,
+        'field_definition' => $field_definition,
+        'field_name' => $name,
+        'field_label' => $label,
+        'no_enforce' => $no_enforce,
+        'case_sensitive' => $case_sensitive,
+        'message' => $field_definition->getThirdPartySetting('unique_field_ajax',
+          'message'),
+        'message_warning' => $field_definition->getThirdPartySetting('unique_field_ajax',
+          'message_warning'),
+      ];
+
+      if (!$no_enforce) {
+        $element[$main_property_name]['#element_validate'][] = 'unique_field_ajax_validate_unique';
+      }
+      if ($field_definition->getThirdPartySetting('unique_field_ajax',
+        'use_ajax')) {
+        $element['#process'] = ['_unique_field_ajax_process'];
+      }
+    }
+  }
+
+  // Alter title to enable unique settings.
+  if ($field_definition instanceof BaseFieldDefinition || $field_definition instanceof BaseFieldOverride) {
+    $entity = NULL;
+    if (isset($context['form']) && isset($context['form']['#type']) && $context['form']['#type'] == 'inline_entity_form') {
+      $entity = $context['form']['#default_value'];
+    }
+    else {
+      $form_object = $form_state->getFormObject();
+      if (method_exists($form_object, 'getEntity')) {
+        $entity = $form_object->getEntity();
+      }
+    }
+    if (!$entity) {
+      return;
+    }
+
+    $entity_type = $entity->getEntityType();
+    if (!($entity_type instanceof ContentEntityType) || !$entity_type->hasKey('label')) {
+      return;
+    }
+
+    $entity_label = $entity_type->getKey('label');
+    if ($entity_label !== $name) {
+      return;
+    }
+
+    $bundle_def_id = $entity_type->getBundleEntityType();
+    if (!$bundle_def_id) {
+      return;
+    }
+
+    $bundle_def = \Drupal::service('entity_type.manager')
+      ->getStorage($bundle_def_id)
+      ->load($entity->bundle());
+    if (!$bundle_def->getThirdPartySetting('unique_field_ajax', 'unique')) {
+      return;
+    }
+
+    $is_unique_per_lang = NULL;
+    if ((\Drupal::moduleHandler()
+      ->moduleExists('language')) && \Drupal::languageManager()
+      ->getCurrentLanguage()
+      ->getId()
+    ) {
+      $is_unique_per_lang = $bundle_def->getThirdPartySetting('unique_field_ajax',
+        'per_lang');
+    }
+    $use_ajax = $bundle_def->getThirdPartySetting('unique_field_ajax',
+      'use_ajax');
+    $case_sensitive = $bundle_def->getThirdPartySetting('unique_field_ajax',
+      'case_sensitive');
+    $no_enforce = $bundle_def->getThirdPartySetting('unique_field_ajax',
+      'no_enforce');
+
+    $element['value']['#unique_field_ajax_settings'] = [
+      'per_lang' => $is_unique_per_lang,
+      'field_definition' => $field_definition,
+      'field_name' => $name,
+      'field_label' => $entity_label,
+      'case_sensitive' => $case_sensitive,
+      'no_enforce' => $no_enforce,
+      'message' => $bundle_def->getThirdPartySetting('unique_field_ajax',
+        'message'),
+      'message_warning' => $bundle_def->getThirdPartySetting('unique_field_ajax',
+        'message_warning'),
+    ];
+    if (!$no_enforce) {
+      $element['value']['#element_validate'][] = 'unique_field_ajax_validate_unique';
+    }
+    if ($use_ajax) {
+      $element['#process'] = ['_unique_field_ajax_process'];
+    }
+  }
+}
+
+/**
+ * Callback for process.
+ *
+ * @param array $form
+ *   Form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   FormState.
+ *
+ * @return mixed
+ *   Return nested array.
+ */
+function _unique_field_ajax_trigger(array &$form, FormStateInterface $form_state) {
+  $element = $form_state->getTriggeringElement();
+  return NestedArray::getValue($form, $element['#array_parents']);
+}
+
+/**
+ * Attach ajax to unique field.
+ *
+ * @param array $element
+ *   Element array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   FormState.
+ * @param array $form
+ *   Form array.
+ *
+ * @return array
+ *   Element array.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function _unique_field_ajax_process(
+  array $element,
+  FormStateInterface &$form_state,
+  array &$form
+): array {
+  foreach (Element::children($element) as $property) {
+    if (isset($element[$property]) && isset($element[$property]['#unique_field_ajax_settings'])) {
+
+      $field_name = $element[$property]['#unique_field_ajax_settings']['field_name'];
+      $unique_field_ajax_settings = $element[$property]['#unique_field_ajax_settings'];
+
+      if ($unique_field_ajax_settings) {
+        $field_label = $unique_field_ajax_settings['field_label'];
+        $wrapper = 'unique-' . $field_name;
+        $form['#attached']['library'][] = 'unique_field_ajax/unique_event';
+        $settings = ['id' => '#' . $wrapper . ' input'];
+        $form['#attached']['drupalSettings']['unique_field_ajax'][] = $settings;
+        $element[$property]['#ajax'] = [
+          'callback' => '_unique_field_ajax_trigger',
+          'event' => 'finishedinput',
+          'wrapper' => $wrapper,
+          'progress' => [
+            'type' => 'throbber',
+            'message' => t('Verifying @field_label...',
+              ['@field_label' => $field_label]),
+          ],
+        ];
+
+        $element[$property]['#prefix'] = '<div id="' . $wrapper . '">';
+        $element[$property]['#suffix'] = '</div>';
+        $value = $form_state->getValue($field_name);
+        $value = !empty($value) ? $value[0][$property] : NULL;
+
+        if (!isset($value)) {
+          return $element;
+        }
+
+        $entity = $form_state->getFormObject()->getEntity();
+        $entity_type = $entity->getEntityTypeId();
+        $lang_code = (!empty($form_state->getValues()['langcode'][0][$property])) ?
+          $form_state->getValues()['langcode'][0][$property] : '0';
+        $no_enforce = $element[$property]['#unique_field_ajax_settings']['no_enforce'];
+        $valid = unique_field_ajax_is_unique(
+          $entity_type,
+          $lang_code,
+          $field_name,
+          $value,
+          $entity->bundle(),
+          $element[$property]['#unique_field_ajax_settings']['per_lang'],
+          $element[$property]['#unique_field_ajax_settings']['case_sensitive'],
+          $entity);
+        $message = unique_field_ajax_custom_message($entity, $element, $valid,
+          $property, TRUE);
+
+        if ($valid !== TRUE) {
+          $class_name = $no_enforce ? 'warning' : 'error';
+          $element[$property]['#attributes']['class'][] = $class_name;
+          $element[$property]['#attributes']['aria-invalid'] = 'true';
+          $element[$property]['#suffix'] = '<div class="' . $class_name . '">' . $message . '</div>' . $element[$property]['#suffix'];
+        }
+
+      }
+    }
+  }
+  return ($element);
+}
+
+/**
+ * Determine if this is a form for title-able entity config.
+ *
+ * @param string $form_id
+ *   Form id.
+ *
+ * @return bool
+ *   Return if node edit or add.
+ */
+function _unique_field_ajax_is_config_form($form_id): bool {
+  $entity_config_forms = [
+    'node_type_edit_form',
+    'node_type_add_form',
+  ];
+  return in_array($form_id, $entity_config_forms);
+}
+
+/**
+ * Return the form field information.
+ *
+ * @param object $field
+ *   Field details.
+ * @param string $inputLookup
+ *   Input lookup.
+ *
+ * @return array
+ *   Form fields.
+ */
+function _unique_field_ajax_form_fields(
+  $field,
+  string $inputLookup = ''
+): array {
+  $tokens = "<br/><strong>" . t('The following tokens that can be used:') . "</strong>";
+  $tokens .= "<br/>" . t("<em>%link</em> display a link to the entity matching the unique value.");
+  $tokens .= "<br/>" . t("<em>%label</em> display the field label.");
+
+  $fields['unique'] = [
+    '#type' => 'checkbox',
+    '#title' => t("Unique"),
+    '#description' => t("Enable unique options."),
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'unique'),
+    '#weight' => -10,
+  ];
+
+  $fields['per_lang'] = [
+    '#type' => 'checkbox',
+    '#title' => t("Per Language"),
+    '#description' => t("Do not allow duplicated content per language."),
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'per_lang'),
+    '#weight' => -9,
+    '#states' => [
+      'visible' => [
+        ':input[name="' . $inputLookup . '[unique]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $fields['case_sensitive'] = [
+    '#type' => 'checkbox',
+    '#title' => t("Case Sensitive"),
+    '#description' => t("Matches will be done on the exact case."),
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'case_sensitive'),
+    '#weight' => -9,
+    '#states' => [
+      'visible' => [
+        ':input[name="' . $inputLookup . '[unique]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $fields['use_ajax'] = [
+    '#type' => 'checkbox',
+    '#title' => t("Use Ajax"),
+    '#description' => t("Use ajax for validation."),
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'use_ajax'),
+    '#weight' => -8,
+    '#states' => [
+      'visible' => [
+        ':input[name="' . $inputLookup . '[unique]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $fields['no_enforce'] = [
+    '#type' => 'checkbox',
+    '#title' => t("Don't enforce uniqueness"),
+    '#description' => t("Will display a warning but still allow saving the field."),
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'no_enforce'),
+    '#weight' => -8,
+    '#states' => [
+      'visible' => [
+        ':input[name="' . $inputLookup . '[unique]"]' => ['checked' => TRUE],
+        ':input[name="' . $inputLookup . '[use_ajax]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $description = t("The custom warning message when the value is not unique and dont enforce uniqueness is enabled.");
+  $description .= $tokens;
+  $fields['message_warning'] = [
+    '#type' => 'textarea',
+    '#title' => t("Warning message"),
+    '#description' => $description,
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'message_warning'),
+    '#weight' => -7,
+    '#states' => [
+      'visible' => [
+        ':input[name="' . $inputLookup . '[unique]"]' => ['checked' => TRUE],
+        ':input[name="' . $inputLookup . '[no_enforce]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  $description = t("The custom error message when the value is not unique.");
+  $description .= $tokens;
+  $fields['message'] = [
+    '#type' => 'textarea',
+    '#title' => t("Error message"),
+    '#description' => $description,
+    '#default_value' => $field->getThirdPartySetting('unique_field_ajax',
+      'message'),
+    '#weight' => -7,
+    '#states' => [
+      'visible' => [
+        ':input[name="' . $inputLookup . '[unique]"]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
+
+  return $fields;
+}
+
+/**
+ * Creates the default or custom message.
+ *
+ * @param \Drupal\Core\Entity\EntityBase $entity
+ *   Entity object.
+ * @param array $element
+ *   Element array.
+ * @param bool|int $valid
+ *   Is valid state.
+ * @param string $property
+ *   Property value.
+ * @param bool $isAjax
+ *   Is ajax.
+ *
+ * @return \Drupal\Component\Render\MarkupInterface
+ *   Returns the custom message.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function unique_field_ajax_custom_message(
+  EntityBase $entity,
+  array $element,
+  $valid,
+  string $property,
+  bool $isAjax
+): MarkupInterface {
+  $unique_field_ajax_settings = $isAjax ? $element[$property]['#unique_field_ajax_settings'] : $element['#unique_field_ajax_settings'];
+  $field_label = $unique_field_ajax_settings['field_label'];
+  $no_enforce = $unique_field_ajax_settings['no_enforce'];
+  $message = $no_enforce ? $unique_field_ajax_settings['message_warning'] : $unique_field_ajax_settings['message'];
+  $hasNid = $valid !== TRUE && $valid !== "0";
+
+  // Default message if nothing set.
+  if (empty($message)) {
+    if ($no_enforce) {
+      $message = t('The field "@field_label" should be unique.',
+        ['@field_label' => $field_label]);
+    }
+    else {
+      $message = t('The field "@field_label" has to be unique.',
+        ['@field_label' => $field_label]);
+    }
+  }
+
+  // If message contains the string %link look up the matching entities.
+  if (strpos($message, '%link') !== FALSE) {
+    $replacement = '<em>' . t('Unknown entity') . '</em>';
+
+    if ($hasNid) {
+      $entity_with_value = \Drupal::entityTypeManager()
+        ->getStorage($entity->getEntityTypeId())
+        ->load($valid);
+
+      if ($entity_with_value && $entity_with_value->access('view')) {
+        $link = $entity_with_value->toLink(NULL, 'canonical', [
+          'attributes' => [
+            '_target' => 'blank',
+          ],
+        ]);
+        $replacement = $link->toString();
+        $link
+          ->getUrl()
+          ->toString(TRUE)
+          ->applyTo($element);
+        CacheableMetadata::createFromObject($entity_with_value)
+          ->applyTo($element);
+      }
+    }
+
+    $message = str_replace('%link', $replacement, $message);
+  }
+
+  // Replace %label with the field label.
+  if (strpos($message, '%label') !== FALSE) {
+    $message = str_replace('%label', $field_label, $message);
+  }
+
+  return Markup::create($message);
+}
+
+/**
+ * Element Validate callback to validate a field.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function unique_field_ajax_validate_unique(
+  $element,
+  FormStateInterface $form_state,
+  array $form
+) {
+  $field_definition = $element['#unique_field_ajax_settings']['field_definition'];
+  $property = $field_definition->getFieldStorageDefinition()
+    ->getMainPropertyName();
+
+  $object = $form_state->getFormObject();
+  if (method_exists($object, 'getEntity')) {
+    $entity = $object->getEntity();
+  }
+  elseif ($form_state->hasTemporaryValue('entity')) {
+    $entity = $form_state->getTemporaryValue('entity');
+  }
+  elseif ($object instanceof FileUploadForm) {
+    // There is not a getEntity method at FileUploadForm class.
+    $entity = current($form_state->get('media'));
+  }
+  // If !isset lang_code set it to 0.
+  $langcode = (!empty($form_state->getValues()['langcode'][0]['value']) && $form_state->getValues()['langcode'][0]['value'])
+    ? $form_state->getValues()['langcode'][0]['value']
+    : $entity->language()->getId();
+
+  $field_name = $element['#unique_field_ajax_settings']['field_name'];
+  if ($object instanceof FileUploadForm) {
+    $value = $form_state->getValue('media');
+    $value = $value[0]['fields'][$field_name][0][$property] ?? "";
+  }
+  else {
+    $value = $form_state->getValue($field_name);
+    $value = $value[0][$property] ?? "";
+  }
+  $entity_type = $entity->getEntityTypeId();
+  $per_lang = $element['#unique_field_ajax_settings']['per_lang'];
+  $case_sensitive = $element['#unique_field_ajax_settings']['case_sensitive'];
+
+  // If field is not unique set error.
+  $valid = unique_field_ajax_is_unique($entity_type, $langcode, $field_name,
+    $value, $entity->bundle(), $per_lang, $case_sensitive, $entity);
+  $message = unique_field_ajax_custom_message($entity, $element, $valid,
+    $property, FALSE);
+
+  if ($valid !== TRUE) {
+    $form_state->setErrorByName($field_name, $message);
+    $form_state->setRebuild();
+  }
+}
+
+/**
+ * Test if the field value already exist in the database.
+ *
+ * @param string $entity_type
+ *   Entity type name.
+ * @param string $lang_code
+ *   Language code.
+ * @param string $field_name
+ *   Field name.
+ * @param string|null $field_value
+ *   Field value.
+ * @param string $bundle
+ *   Bundle.
+ * @param bool|null $is_unique_per_lang
+ *   Is unique per lang flag.
+ * @param \Drupal\Core\Entity\EntityBase $entity
+ *   The entity object.
+ *
+ * @return bool|string
+ *   Boolean TRUE if the value is unique. In any other case, the entity ID of
+ *   the entity that has the same value.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function unique_field_ajax_is_unique(
+  string $entity_type,
+  string $lang_code,
+  string $field_name,
+  ?string $field_value,
+  string $bundle,
+  ?bool $is_unique_per_lang,
+  ?bool $is_case_sensitive,
+  EntityBase $entity
+) {
+
+  $entity_type_definition = Drupal::entityTypeManager()
+    ->getDefinition($entity_type);
+
+  $query = Drupal::entityQuery($entity_type)
+    ->range(0, 1);
+
+  if ($is_case_sensitive) {
+    $query->condition($field_name, $field_value, 'LIKE BINARY');
+  }
+  else {
+    $query->condition($field_name, $field_value, '=');
+  }
+
+  if (!$entity->isNew()) {
+    $query->condition($entity_type_definition->getKey('id'), $entity->id(),
+      '<>');
+  }
+
+  // Test if the entity has a bundle.
+  if (!empty($entity_type_definition->getKey('bundle'))) {
+    $query->condition($entity_type_definition->getKey('bundle'), $bundle, '=');
+  }
+
+  // Test unique per language.
+  if ($is_unique_per_lang) {
+    $query->condition('langcode', $lang_code);
+  }
+
+  // All the metadata.
+  $metadata = [
+    'entity_type' => $entity_type,
+    'lang_code' => $lang_code,
+    'field_name' => $field_name,
+    'field_value' => $field_value,
+    'bundle' => $bundle,
+    'is_unique_per_lang' => $is_unique_per_lang,
+    'is_case_sensitive' => $is_case_sensitive,
+    'entity' => $entity,
+  ];
+
+  // Add the 'unique_field_ajax' query tag and metadata for altering purposes.
+  $query->addTag('unique_field_ajax');
+  foreach ($metadata as $key => $value) {
+    $query->addMetaData($key, $value);
+  }
+
+  // Need to disable access check as we want to always find something.
+  $query->accessCheck(FALSE);
+
+  $entities = $query->execute();
+
+  // Invoke the unique results alter.
+  \Drupal::moduleHandler()->invokeAll('unique_field_ajax_unique_results_alter',
+    [&$entities, $metadata]
+  );
+
+  if (!empty($entities)) {
+    return array_shift($entities);
+  }
+
+  return TRUE;
+}

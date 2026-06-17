@@ -1,0 +1,11 @@
+pdf_api.settings:
+  title: PDF API
+  description: 'Manage PDF API settings.'
+  route_name: pdf_api.settings
+  base_route: system.admin_config_system
+
+pdf_api.dom_pdf.settings:
+  title: dompdf
+  description: 'Manage dompdf settings.'
+  route_name: pdf_api.settings
+  parent_id: pdf_api.settings

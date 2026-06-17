@@ -1,0 +1,13 @@
+<div class="pod__descripcion__row pod__descripcion__row--header">
+  <div class="pod__descripcion__cantidad">
+    {{ "Cantidad"|t }}
+  </div>
+  <div class="pod__descripcion__detalle">
+    {{ "Descripcion"|t }}
+  </div>
+</div>
+{% for item in items %}
+<div class="pod__descripcion__row pod__descripcion__row--cuerpo">
+  {{ item.content }}
+</div>
+{% endfor %}

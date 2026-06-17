@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Install functions for the printable module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function printable_requirements() {
+  $requirements = [];
+  if (!class_exists('\Wa72\HtmlPageDom\HtmlPageCrawler')) {
+    $requirements['printable_library'] = [
+      'title' => t('Printable'),
+      'value' => t('Not available'),
+      'description' => t('The Printable module depends on the <b>@library</b> library. Please install the library (eg using composer) and then enable this module.', [
+        '@library' => "wa72/htmlpagedom",
+      ]),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+  return $requirements;
+}
+
+/**
+ * Schema fixes.
+ */
+function printable_update_9000() {
+  $config = \Drupal::configFactory()->getEditable('printable.settings');
+  $config->set('path_to_xvfb_run', $config->get('path_to_xfb_run'));
+  $config->clear('path_to_xfb_run');
+  $config->set('ignore_warnings', (bool) $config->get('ignore_warnings'));
+  $config->save();
+}
+
+/**
+ * More schema updates.
+ */
+function printable_update_9001() {
+  $config = \Drupal::configFactory()->getEditable('printable.settings');
+
+  /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundleInfo */
+  $bundleInfo = \Drupal::service('entity_type.bundle.info');
+  foreach ($config->get('printable_entities') as $entityTypeId => $enabled) {
+    $config->set("printable_entities_bundles.{$entityTypeId}._all", !!$enabled);
+    foreach ($bundleInfo->getBundleInfo($entityTypeId) as $bundle => $data) {
+      $config->set("printable_entities_bundles.{$entityTypeId}.{$bundle}", FALSE);
+    }
+  }
+  $config->set('exclude_printable_links', TRUE);
+  $config->save();
+}
+
+/**
+ * Handle link extractor option being '0'.
+ */
+function printable_update_9002() {
+  $config = \Drupal::configFactory()->getEditable('printable.settings');
+  if ($config->get('extract_links') == '0') {
+    $config->set('extract_links', 'none');
+    $config->save();
+  }
+}
+
+
+/**
+ * Ensure link extractor option is valid.
+ */
+function printable_update_9003() {
+  $plugins = \Drupal::service('printable.link_extractor_plugin_manager')->getDefinitions();
+  $config = \Drupal::configFactory()->getEditable('printable.settings');
+  if (!in_array($config->get('extract_links'), array_keys($plugins))) {
+    $config->set('extract_links', 'none');
+    $config->save();
+  }
+}

@@ -1,0 +1,18 @@
+<div class="usuario usuario--lateral">
+  <div class="usuario--perfil__row usuario--perfil__row--informacion">
+    <a href="/user/{{ user.id() }}">
+      <div class="usuario--perfil__fotografia">
+        {{ content.user_picture }}
+      </div>
+      <div class="usuario--perfil__nombre">
+        {{ user.field_nombre.value }} {{ user.field_apellido.value }}
+      </div>
+      <div class="usuario--perfil__puesto">
+        {{ content.field_puesto }}
+      </div>
+      <div class="usuario--perfil__username">
+        {{ user.name.value }}
+      </div>
+    </a>
+  </div>
+</div>

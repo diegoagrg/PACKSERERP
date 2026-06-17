@@ -1,0 +1,32 @@
+printable_entities:
+  - node
+  - comment
+  - user
+printable_entities_bundles:
+  node:
+    _all: TRUE
+  comment:
+    _all: TRUE
+  user:
+    _all: TRUE
+open_target_blank: TRUE
+css_include: ''
+extract_links: 'none'
+link_canonical: TRUE
+save_pdf: FALSE
+pdf_tool: ''
+paper_size: 'A4'
+page_orientation: 'Portrait'
+path_to_binary: ''
+pdf_location: ''
+send_to_printer: FALSE
+close_window: FALSE
+list_attribute: FALSE
+printable_print_link_locations:
+  - node
+printable_pdf_link_locations:
+  - ''
+print_pdf_use_xvfb_run: FALSE
+ignore_warnings: FALSE
+path_to_xvfb_run: ''
+exclude_printable_links: TRUE

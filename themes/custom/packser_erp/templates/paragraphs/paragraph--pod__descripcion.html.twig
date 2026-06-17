@@ -1,0 +1,11 @@
+<div class="pod__descripcion__cantidad">
+  {{ content.field_cantidad }}
+</div>
+<div class="pod__descripcion__detalle">
+  {{content.field_descripcion }} - {{ content.field_detalle }}
+</div>
+{% if content.field_detalle__texto_libre|render %}
+  <div class="pod__descripcion__detalle_opcional">
+    {{ content.field_detalle__texto_libre }}
+  </div>
+{% endif %}

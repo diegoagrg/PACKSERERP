@@ -1,0 +1,5 @@
+puphpeteer.config:
+  title: Puphpeteer
+  description: 'Manage Puphpeteer settings.'
+  route_name: puphpeteer.config
+  parent_id: pdf_api.settings

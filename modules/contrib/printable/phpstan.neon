@@ -1,0 +1,86 @@
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+
+parameters:
+  level: 1
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    -
+      message: "#^Missing cache backend declaration for performance\\.$#"
+      count: 1
+      path: src/PrintableFormatPluginManager.php
+
+    -
+      message: "#^Plugin definitions cannot be altered\\.$#"
+      count: 1
+      path: src/PrintableFormatPluginManager.php
+
+    -
+      message: "#^Missing cache backend declaration for performance\\.$#"
+      count: 1
+      path: src/PrintableLinkExtractorPluginManager.php
+
+    -
+      message: "#^Plugin definitions cannot be altered\\.$#"
+      count: 1
+      path: src/PrintableLinkExtractorPluginManager.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: modules/printable_pdf/src/Plugin/PrintableFormat/PdfFormat.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Controller/PrintableController.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Form/FormatConfigurationFormPdf.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Form/FormatConfigurationFormPrint.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Form/LinksConfigurationForm.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Form/PdfLinksConfigurationForm.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Form/PrintableConfigurationForm.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Plugin/Block/PrintableLinksBlock.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Plugin/Derivative/PrintableFormatConfigureTabs.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Plugin/Derivative/PrintableLinksBlock.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Plugin/PrintableFormatBase.php
+
+    -
+      message: "#^Unsafe usage of new static\\(\\)\\.$#"
+      count: 1
+      path: src/Plugin/PrintableLinkExtractor/PrintableLinkExtractorBase.php

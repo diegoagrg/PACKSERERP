@@ -1,0 +1,7 @@
+puphpeteer.config:
+  path: '/admin/config/system/pdf-api/puphpeteer'
+  defaults:
+    _title: 'Puphpeteer'
+    _form: 'Drupal\puphpeteer\Form\Configuration'
+  requirements:
+    _permission: 'administer site configuration'

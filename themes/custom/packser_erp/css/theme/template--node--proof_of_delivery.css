@@ -1,0 +1,153 @@
+
+.pod,
+.pod__row,
+.pod__col {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pod {
+  width: 100%;
+  background: #efeeee;
+  color: #272727;
+  border: solid 1px;
+}
+
+.pod__row {
+  flex: 100%;
+  margin: -1em;
+}
+
+.pod__col {
+  flex: 1;
+  margin: 1em;
+  padding: 0.5em;
+}
+
+.pod__col--id {
+  text-align: right;
+}
+
+.pod__col--id > div {
+  flex: 100%;
+}
+
+.pod__titulo {
+  margin-top: 1em;
+}
+
+.pod__id {
+  font-weight: bold;
+  font-size: 2em;
+  text-decoration: underline;
+  margin-bottom: 1em;
+}
+
+.pod__col--id .field > div {
+  display: inline-block;
+}
+
+.pod__col--id .field--label {
+  font-size: 0.8em;
+}
+
+.pod__col--id .field--label::after {
+  content: ':';
+}
+
+.pod__col--id .field--item {
+  width: 200px;
+  border-bottom: solid 1px;
+  text-align: center;
+}
+
+.pod_col--comprador {
+  border: solid;
+  margin: 1.5em;
+  height: 100px;
+}
+
+.pod_col--comprador > div {
+  flex: 100%;
+}
+
+.pod_col--comprador .field {
+  display: flex;
+}
+
+.pod_col--comprador .field--label {
+  width: 150px;
+  font-size: 0.8em;
+}
+
+.pod_col--comprador .field--label::after {
+  content: ':';
+}
+
+.pod_col--comprador .field--item {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.pod__descripcion {
+  border: solid;
+  flex: 100%;
+  font-size: 0.8em;
+  text-align: center;
+}
+
+.pod__descripcion__row {
+  padding: 0.3em;
+  display: flex;
+}
+
+.pod__descripcion__row--header {
+  background: #000;
+  color: #fff;
+}
+
+.pod__descripcion__cantidad {
+  flex: 30%;
+}
+
+.pod__descripcion__detalle {
+  flex: 70%;
+  display: flex;
+  justify-content: center;
+}
+
+.pod__descripcion__row--cuerpo:not(:last-child) {
+  border-bottom: solid 2px;
+}
+
+.pod__col--detalle,
+.pod__col--notas,
+pod__col--evidencia {
+  flex: 100%;
+}
+
+.pod__col--evidencia .field--items {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -4px;
+}
+
+.pod__col--evidencia .field--item {
+  padding: 4px;
+}
+
+.pod__descripcion__detalle_opcional {
+  flex: 70%;
+  justify-self: flex-end;
+  text-align: right;
+}
+
+.pod__descripcion__row.pod__descripcion__row--cuerpo {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pod__descripcion__detalle {
+  text-align: right;
+  justify-content: flex-end;
+}
